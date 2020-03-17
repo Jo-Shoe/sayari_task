@@ -2,7 +2,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib import gridspec as gs
 from random import random
+from getopt import getopt
 import json
+import sys
 
 
 def visualize_net(net, figfile="business_net.pdf", cutoffs=None, maxcols=6, disp_dict=None):
@@ -24,9 +26,7 @@ def visualize_net(net, figfile="business_net.pdf", cutoffs=None, maxcols=6, disp
     layout = nx.drawing.nx_agraph.graphviz_layout(net)
 
     for subplot, (subrows, subcols, connected_components) in zip(subplots, organized_components):
-        print(subrows, subcols, len(connected_components))
         subplot = subplot.subgridspec(subrows, subcols)
-        print(subplot)
         for idx, ccomp in enumerate(connected_components):
             disp_dict["node_color"] = [
                 (random(), random(), random())] * ccomp.order()
@@ -73,7 +73,7 @@ def ND_lines_to_net(jl_filename="ND_businesses.jl", entity_attrs=None):
             "Owner Name", "Commercial Registered Agent", "Owners", "Registered Agent"]
 
     net = nx.DiGraph()
-    with open(jl_filename, "rU") as jl_file:
+    with open(jl_filename) as jl_file:
         for ln in jl_file:
             biz_dict = json.loads(ln)
             name = biz_dict["Name"].lower()
@@ -87,5 +87,7 @@ def ND_lines_to_net(jl_filename="ND_businesses.jl", entity_attrs=None):
                 net.add_edge(parent, name)
     return net
 
-n = ND_lines_to_net()
-visualize_net(n)
+if __name__ == "__main__":
+    opts, other = getopt(sys.argv[1:], "i:o:", [])
+    opts = dict(opts)
+    visualize_net(ND_lines_to_net(opts["-i"]), opts["-o"])

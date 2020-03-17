@@ -3,7 +3,7 @@ import json
 
 
 class ND_spider(scrapy.Spider):
-    '''Queries the North Dakota Secy of State Business Search page and copies resulting info into JSON file. Expected usage:
+    '''Queries the North Dakota Secy of State Business Search page and copies resulting info into JSON lines file. Expected usage:
                     $ scrapy runspider nd_spider.py -a query=<str> -s FEED_URI=<filepath> '''
     name = "ND_business_search"
     custom_settings = {"FEED_FORMAT": "jsonlines"}
